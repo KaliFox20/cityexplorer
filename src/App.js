@@ -12,46 +12,48 @@ class App extends React.Component {
     }
   }
 
-handleInput = (e) => {
-  e.preventDefault();
-  this.setState({
-    city: e.target.value
-  })
+  handleInput = (e) => {
+    e.preventDefault();
+    this.setState({
+      city: e.target.value
+    })
+  }
+
+  getCityData = async (e) => {
+    e.preventDefault();
+
+    try {
+      let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`
+
+      let cityData = await axios.get(url);
+
+      this.setState({
+        cityLat: cityData.data[0].lat,
+        cityLon: cityData.data[0].lon,
+      })
+
+
+      console.log(cityData.data[0]);
+    } catch (error) {
+      this.setState({
+        errorMessage: error.message
+      })
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>City Explorer</h1>
+        <form onSubmit={this.getCityData}>
+          <label> Select of City
+            <input type="text" onInput={this.handleInput} />
+          </label>
+          <button type='submit'>Explore!</button>
+        </form>
+      </div>
+    )
+  }
 }
 
-getCityData = async (e) => {
-  e.preventDefault();
-
- try{
-  let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`
-
-  let cityData = await axios.get(url);
-
-  this.setState({
-    cityLat: cityData.data[0].lat,
-    cityLon: cityData.data[0].lon,
-  })
-
-
-  console.log(cityData.data[0]);
- } catch(error){
-  this.setState({
-    errorMessage: error.message
-  })
- }
-}
-
-render (){
-  return (
-    <div>
-      <h1>City Explorer</h1>
-      <form onSubmit={this.getCityData}>
-        <label> Select of City
-          <input type="text" onInput ={this.handleInput} />
-        </label>
-    <button type='submit'>Explore!</button>
-      </form>
-    </div>
-  )
-}
-
+export default App;
