@@ -11,6 +11,8 @@ class App extends React.Component {
       cityLat: 0,
       cityLon: 0,
       showCityData: false,
+      errorMessage: '',
+      showError: false,
     }
   }
 
@@ -33,6 +35,8 @@ class App extends React.Component {
         cityLat: cityData.data[0].lat,
         cityLon: cityData.data[0].lon,
         showCityData: true,
+        errorMessage: '',
+        showError: false,
       })
 
 
@@ -41,6 +45,7 @@ class App extends React.Component {
       this.setState({
         errorMessage: error.message,
         showCityData: false,
+        showError: true,
       })
     }
   }
@@ -56,16 +61,21 @@ class App extends React.Component {
           </label>
           <Button type='submit' onSubmit={e => this.getCityData(e)} >Explore!</Button>
         </form>
-       {this.state.showCityData && <Card>
+        {this.state.showCityData && <Card>
           <Card.Body>
             <Card.Text>
               <p>{this.state.cityLat}</p>
               <p> {this.state.cityLon}</p>
             </Card.Text>
-
+            <img src={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=${this.state.cityLat},${this.state.cityLon}&zoom=10`} alt='' title=''></img>
           </Card.Body>
 
-        </Card>}
+        </Card>
+          
+        }
+        { this.state.showError &&
+          <p>{this.state.errorMessage}</p>
+        }
       </div>
     )
   }
